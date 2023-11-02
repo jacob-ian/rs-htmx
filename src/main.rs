@@ -1,5 +1,6 @@
 use std::net::SocketAddr;
 
+use askama::Template;
 use axum::{routing::get, Router};
 use rs_htmx::assets;
 
@@ -18,6 +19,10 @@ async fn main() {
         .unwrap();
 }
 
-async fn home() -> &'static str {
-    return "Hello world";
+#[derive(Template)]
+#[template(path = "home.html")]
+struct HomeTemplate {}
+
+async fn home() -> HomeTemplate {
+    return HomeTemplate {};
 }
