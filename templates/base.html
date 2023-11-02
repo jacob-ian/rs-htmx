@@ -11,9 +11,11 @@
   </head>
   <body class="bg-slate-900 flex flex-col items-center">
     <nav class="bg-slate-700 w-full">
-      <ul class="flex flex-row justify-center items-center gap-5 py-5" hx-boost="true">
+      <ul class="flex flex-row justify-center items-center gap-5 py-5 px-5" hx-boost="true">
+        <div class="font-bold text-blue-300 flex-1">rs-htmx</div>
         {% call nav::item("/", "Home") %}
         {% call nav::item("/about", "About") %}
+        <div class="flex-1"></div>
       </ul>
     </nav>
     <div id="root" class="flex flex-col h-full w-1/2 py-10 text-white">
