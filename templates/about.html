@@ -1,8 +1,9 @@
+{%- import "shared/headings.html" as headings %}
 {% extends "base.html" %}
 
 {% block title %}About{% endblock %}
 
 {% block content %}
-<h1>About</h1>
+{% call headings::h1("About") %}
 <p>This is a list application</p>
 {% endblock %}
