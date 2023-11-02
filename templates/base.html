@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}{{ title }}{% endblock %} | rs-htmx</title>
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script src="/assets/htmx@1.9.6.min.js"></script>
+    {% block meta %}{% endblock %}
+  </head>
+  <body>
+    <div id="root" class="flex flex-col">{% block content %}{% endblock %}</div>
+  </body>
+</html>
