@@ -29,17 +29,17 @@ async fn create_item(
     Form(create): Form<CreateItem>,
 ) -> Result<(StatusCode, Item), Error> {
     let mut items = state.items.lock().await;
-    let mut found = false;
+    let mut exists = false;
     for i in &items.to_vec() {
         if i.name == create.name {
-            found = true;
+            exists = true;
             break;
         }
     }
-    if found {
-        return Err(Error::ValidationError(ErrorInfo {
+    if exists {
+        return Err(Error::BadRequest(ErrorInfo {
             message: String::from("Name already exists"),
-            retarget: Some(String::from("#list-add")),
+            retarget: None,
         }));
     }
     let item = Item {

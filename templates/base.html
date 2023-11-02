@@ -7,9 +7,10 @@
     <title>{% block title %}{{ title }}{% endblock %} | rs-htmx</title>
     <link rel="stylesheet" href="/assets/styles.css" />
     <script src="/assets/htmx@1.9.6.min.js"></script>
+    <script src="/assets/htmx-response-targets@1.9.6.js"></script>
     {% block meta %}{% endblock %}
   </head>
-  <body class="bg-slate-900 flex flex-col items-center">
+  <body hx-ext="response-targets" class="bg-slate-900 flex flex-col items-center">
     <nav class="bg-slate-700 w-full">
       <ul class="flex flex-row justify-center items-center gap-5 py-5 px-5" hx-boost="true">
         <div class="font-bold text-blue-300 flex-1">rs-htmx</div>

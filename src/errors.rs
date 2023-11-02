@@ -41,9 +41,9 @@ impl Error {
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         let mut headers = HeaderMap::new();
+        // headers.insert("HX-Reswap", "innerHTML".parse().unwrap());
         if let Some(retarget) = self.get_retarget() {
             headers.insert("HX-Retarget", retarget.parse().unwrap());
-            headers.insert("HX-Reswap", "afterend".parse().unwrap());
         };
         return (
             self.get_status_code(),
