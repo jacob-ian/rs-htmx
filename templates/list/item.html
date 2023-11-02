@@ -1,0 +1,10 @@
+{% macro item(id, name) %}
+<button 
+  class="cursor-pointer w-full p-2 rounded-md bg-slate-900 text-white" 
+  hx-delete="/items/{{ id }}" 
+  hx-swap="outerHMTL">
+  {{ name }}
+</button>
+{% endmacro %}
+
+{% call item(id, name) %}

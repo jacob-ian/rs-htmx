@@ -1,11 +1,23 @@
 {%- import "shared/headings.html" as headings -%}
+{%- import "list/item.html" as list -%}
 
 {% extends "base.html" %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="flex flex-col">
-   {% call headings::h1("Welcome") %}
+{% call headings::h1("Welcome") %}
+<p>This is the list.</p>
+<br/>
+<p>Add items and stuff.</p>
+<form class="mt-5" hx-post="/items"  hx-target="#list" hx-swap="beforeend">
+  <input class="p-2 rounded-md mr-2 text-black" type="text" name="name" required></input>
+  <button class="rounded-md px-5 py-2 text-white bg-slate-500" type="submit">Add</button>
+</form>
+</div>
+<div id="list" class="flex flex-col bg-slate-100 rounded-md w-full h-60 mt-5 p-5 gap-2">
+  {% for item in list %}
+    {% call list::item(item.id, item.name) %}
+  {% endfor %}
 </div>
 {% endblock %}
