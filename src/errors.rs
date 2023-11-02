@@ -1,9 +1,16 @@
 use axum::response::{Html, IntoResponse, Response};
-use hyper::StatusCode;
+use hyper::{HeaderMap, StatusCode};
 
 pub enum Error {
-    NotFound(String),
-    BadRequest(String),
+    NotFound(ErrorInfo),
+    BadRequest(ErrorInfo),
+    ValidationError(ErrorInfo),
+}
+
+pub struct ErrorInfo {
+    pub message: String,
+    /// the ID of the retarget element
+    pub retarget: Option<String>,
 }
 
 impl Error {
@@ -11,18 +18,38 @@ impl Error {
         return match self {
             Error::NotFound(_) => StatusCode::NOT_FOUND,
             Error::BadRequest(_) => StatusCode::BAD_REQUEST,
+            Error::ValidationError(_) => StatusCode::UNPROCESSABLE_ENTITY,
         };
     }
     fn get_message(self) -> String {
         return match self {
-            Error::NotFound(m) => m,
-            Error::BadRequest(m) => m,
+            Error::NotFound(e) => e.message,
+            Error::BadRequest(e) => e.message,
+            Error::ValidationError(e) => e.message,
         };
+    }
+    fn get_retarget(&self) -> Option<String> {
+        let inner = match self {
+            Error::BadRequest(i) => i,
+            Error::NotFound(i) => i,
+            Error::ValidationError(i) => i,
+        };
+        return inner.retarget.to_owned();
     }
 }
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        return (self.get_status_code(), Html(self.get_message())).into_response();
+        let mut headers = HeaderMap::new();
+        if let Some(retarget) = self.get_retarget() {
+            headers.insert("HX-Retarget", retarget.parse().unwrap());
+            headers.insert("HX-Reswap", "afterend".parse().unwrap());
+        };
+        return (
+            self.get_status_code(),
+            headers,
+            Html(format!("<span>{}</span>", self.get_message())),
+        )
+            .into_response();
     }
 }

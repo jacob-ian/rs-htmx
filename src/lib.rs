@@ -1,17 +1,12 @@
 use std::sync::Arc;
 
-use askama::Template;
 use tokio::sync::Mutex;
+
+use crate::items::Item;
 
 pub mod assets;
 pub mod errors;
-
-#[derive(Clone, Template)]
-#[template(path = "list/item.html")]
-pub struct Item {
-    pub id: String,
-    pub name: String,
-}
+pub mod items;
 
 #[derive(Clone)]
 pub struct AppState {

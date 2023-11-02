@@ -9,7 +9,7 @@ edition = "2021"
 askama = { version = "0.12.1", features = ["with-axum"] }
 askama_axum = "0.3.0"
 axum = "0.6.20"
-hyper = { version = "0.14.27", features = ["full"] }
+hyper = { version = "0.14.27", features = ["full", "http1"] }
 include_dir = "0.7.3"
 serde = { version = "1.0.190", features = ["derive"] }
 tokio = { version = "1.33.0", features = ["full"] }
