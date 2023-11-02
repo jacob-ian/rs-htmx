@@ -8,6 +8,7 @@ use rs_htmx::assets;
 async fn main() {
     let app = Router::new()
         .route("/", get(home))
+        .route("/about", get(about))
         .nest("/assets", assets::router());
 
     let addr: SocketAddr = "0.0.0.0:4000".parse().unwrap();
@@ -25,4 +26,12 @@ struct HomeTemplate {}
 
 async fn home() -> HomeTemplate {
     return HomeTemplate {};
+}
+
+#[derive(Template)]
+#[template(path = "about.html")]
+struct AboutTemplate {}
+
+async fn about() -> AboutTemplate {
+    return AboutTemplate {};
 }

@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+{%- import "nav/item.html" as nav -%}
+
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -7,7 +9,15 @@
     <script src="/assets/htmx@1.9.6.min.js"></script>
     {% block meta %}{% endblock %}
   </head>
-  <body>
-    <div id="root" class="flex flex-col">{% block content %}{% endblock %}</div>
+  <body class="bg-slate-900 flex flex-col items-center">
+    <nav class="bg-slate-700 w-full">
+      <ul class="flex flex-row justify-center items-center gap-5 py-5" hx-boost="true">
+        {% call nav::item("/", "Home") %}
+        {% call nav::item("/about", "About") %}
+      </ul>
+    </nav>
+    <div id="root" class="flex flex-col h-full w-1/2 py-10 text-white">
+      {% block content %}{% endblock %}
+    </div>
   </body>
 </html>
