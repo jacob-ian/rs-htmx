@@ -10,18 +10,7 @@
 <p>This is the list.</p>
 <br/>
 <p>Add items and stuff.</p>
-<form 
-  id="list-add" 
-  class="mt-5 flex flex-row" 
-  hx-post="/items"  
-  hx-swap="beforeend" 
-  hx-target="#list"  
-  hx-target-400="#add-error" 
-  hx-on::before-request="document.getElementById('add-error').innerHTML = ''">
-  <input class="p-2 rounded-md mr-2 text-black flex-1" type="text" name="name" required></input>
-  <button class="rounded-md px-5 py-2 text-white bg-slate-500" type="submit">Add</button>
-</form>
-<div id="add-error" class="text-sm text-red-500 mt-2"></div>
+{{ form|safe }}
 <div id="list" class="flex flex-col bg-slate-100 rounded-md w-full h-60 mt-5 p-5 gap-2">
   {% for item in list %}
     {% call list::item(item.id, item.name) %}

@@ -5,7 +5,7 @@ use axum::{extract::State, routing::get, Router};
 use hyper::server::conn::AddrIncoming;
 use rs_htmx::{
     assets,
-    items::{self, Item},
+    items::{self, FormTemplate, Item},
     AppState,
 };
 use tokio::sync::Mutex;
@@ -36,11 +36,15 @@ async fn main() {
 #[template(path = "home.html")]
 struct HomeTemplate {
     list: Vec<Item>,
+    form: FormTemplate<'static>,
 }
 
 async fn home(State(state): State<AppState>) -> HomeTemplate {
     let list = state.items.lock().await.to_vec();
-    return HomeTemplate { list };
+    return HomeTemplate {
+        list,
+        form: FormTemplate::default(),
+    };
 }
 
 #[derive(Template)]

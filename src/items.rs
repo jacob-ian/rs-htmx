@@ -1,10 +1,14 @@
 use askama::Template;
-use axum::{extract::State, routing::post, Form, Router};
-use hyper::StatusCode;
+use axum::{
+    extract::{Path, State},
+    routing::{delete, post},
+    Form, Router,
+};
+use hyper::{HeaderMap, StatusCode};
 use serde::Deserialize;
 
 use crate::{
-    errors::{Error, ErrorInfo},
+    errors::{Error, ErrorInfo, HtmxError, Toast},
     AppState,
 };
 
@@ -16,7 +20,9 @@ pub struct Item {
 }
 
 pub fn router() -> Router<AppState> {
-    return Router::new().route("/", post(create_item));
+    return Router::new()
+        .route("/", post(create_item))
+        .route("/:id", delete(delete_item));
 }
 
 #[derive(Deserialize)]
@@ -27,9 +33,10 @@ struct CreateItem {
 async fn create_item(
     State(state): State<AppState>,
     Form(create): Form<CreateItem>,
-) -> Result<(StatusCode, Item), Error> {
+) -> Result<(StatusCode, Item), HtmxError<'static, FormTemplate<'static>>> {
     let mut items = state.items.lock().await;
     let mut exists = false;
+
     for i in &items.to_vec() {
         if i.name == create.name {
             exists = true;
@@ -37,10 +44,13 @@ async fn create_item(
         }
     }
     if exists {
-        return Err(Error::BadRequest(ErrorInfo {
-            message: String::from("Name already exists"),
-            retarget: None,
-        }));
+        return Err(HtmxError::new(
+            FormTemplate {
+                error: Some("Name already exists"),
+            },
+            "#list-add",
+            "outerHTML",
+        ));
     }
     let item = Item {
         id: format!("{}-id", create.name),
@@ -48,4 +58,47 @@ async fn create_item(
     };
     items.push(item.clone());
     return Ok((StatusCode::CREATED, item));
+}
+
+#[derive(Template)]
+#[template(path = "list/form.html")]
+pub struct FormTemplate<'a> {
+    error: Option<&'a str>,
+}
+
+impl<'a> Default for FormTemplate<'a> {
+    fn default() -> Self {
+        return FormTemplate { error: None };
+    }
+}
+
+async fn delete_item(
+    State(state): State<AppState>,
+    Path(id): Path<String>,
+) -> Result<StatusCode, HtmxError<'static, Toast<'static>>> {
+    let mut items = state.items.lock().await;
+    let mut found = false;
+
+    let mut out: Vec<Item> = Vec::new();
+    for i in &items.to_vec() {
+        if i.id == id {
+            found = true;
+            continue;
+        }
+        if i.id != id {
+            out.push(i.clone());
+        }
+    }
+    if !found {
+        return Err(HtmxError {
+            body: Toast {
+                message: "Item does not exist",
+            },
+            retarget: "body",
+            reswap: "beforeend",
+        });
+    }
+
+    *items = out;
+    return Ok(StatusCode::OK);
 }
